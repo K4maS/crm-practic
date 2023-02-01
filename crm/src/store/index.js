@@ -1,8 +1,13 @@
 import { createStore } from 'vuex';
-import API_BASE_URL from "@/config";
-// import client from '@modules/post';
+import axios from 'axios';
+import API_BASE_URL from '@/config';
 
 export default createStore({
+    data() {
+        return {
+
+        };
+    },
     // в модули мы можем декомпозировать логигку vuex store
     modules: {
         // client,
@@ -17,7 +22,7 @@ export default createStore({
 
         },
         addClient(context, data) {
-            return axios.post(API_BASE_URL + '/api/clients/',  {
+            return axios.post(API_BASE_URL + '/api/clients/', {
                 id: data.id,
                 createdAt: data.createdAt,
                 updatedAt: data.updatedAt,
@@ -26,7 +31,7 @@ export default createStore({
                 lastName: data.lastName,
                 contacts: data.contacts,
             })
-                .then((response) => { console.log(response)  })
+                .then((response) => { console.log(response) })
                 .catch(console.log('Сервер не работает'));
 
         },

@@ -26,22 +26,23 @@
                             <p class="label-text text-gray-main">
                                 Фамилия*
                             </p>
-                            <input v-model="lastname" type="text" class="text-black-main form__input form__input-lastname"
-                                placeholder="Фамилия*"  required>
+                            <input v-model="lastname" type="text"
+                                class="text-black-main form__input form__input-lastname" placeholder="Фамилия*"
+                                required>
                         </label>
                         <label for="name" class="form__label form__label-name">
                             <p class="label-text text-gray-main">
                                 Имя*
                             </p>
-                            <input v-model="name" type="text" class="text-black-main form__input form__input-name" placeholder="Имя*"
-                                 required>
+                            <input v-model="name" type="text" class="text-black-main form__input form__input-name"
+                                placeholder="Имя*" required>
                         </label>
                         <label for="surname" class="form__label form__label-surname">
                             <p class="label-text text-gray-main">
                                 Отчество
                             </p>
                             <input v-model="surname" type="text" class="text-black-main form__input form__input-surname"
-                                 placeholder="Отчество">
+                                placeholder="Отчество">
                         </label>
                     </div>
                     <div class="form__contact-block added-paddings flex">
@@ -128,7 +129,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+// import { mapActions } from 'vuex';
 import contactTypes from '@/data/contactTypes';
 import axios from 'axios';
 import API_BASE_URL from "@/config";
@@ -142,7 +143,7 @@ export default {
             updatedAt: '',
             name: '',
             surname: '',
-            lastName: '',
+            lastname: '',
 
             contactTypes,
             contactsArr: [],
@@ -158,22 +159,21 @@ export default {
         addClient() {
             this.addingData = true;
             this.addingDataError = false;
-            return axios.post(API_BASE_URL + 'api/clients', {
+            return axios.post(API_BASE_URL + 'api/clients/', {
                 createdAt: this.createdAt,
                 updatedAt: this.updatedAt,
                 name: this.name,
                 surname: this.surname,
                 lastName: this.lastName,
-                contacts: this.contacts,
+                contacts: this.contactsArr,
             })
                 .catch(this.addingDataError = true)
                 .then(this.addingData = false);
 
         },
-        makeContactPool() {
 
-        },
-        ...mapActions(['addClient']),
+
+        // ...mapActions(['addClient']),
         // addClient() {
         //     this.addingData = false;
         //     this.addingDataError = false;
@@ -202,23 +202,29 @@ export default {
         //     })
         //         .then(this.addingDataError = false,
         //             this.addingData = false);
+        // },
+        CreateId(arr) {
+            let max = 0;
+            for (const item of arr) {
+
+                if (item.id >= max) { max = item.id; }
+
+            }
+            return max + 1;
+        },
+        doClose() {
+            this.$emit('update:open', false);
+            this.contactsArr = [];
+        },
+        contactFormAdd() {
+            this.contactsArr.push({ id: this.contactsId, type: 'Телефон', value: '' });
+            this.contactsId = this.CreateId(this.contactsArr);
+        },
+        contactFormRemove(labelId) {
+            this.contactsArr.splice(labelId, 1);
+        },
 
 
-
-    },
-
-    doClose() {
-        this.$emit('update:open', false);
-        this.contactsArr = [];
-    },
-    contactFormAdd() {
-        this.contactsArr.push({ id: this.contactsId, type: 'Телефон', value: '' });
-        this.contactsId += 1;
-    },
-    contactFormRemove(labelId) {
-        this.contactsArr.splice(labelId, 1);
-    },
-
-
+    }
 }
 </script>
