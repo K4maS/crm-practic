@@ -84,7 +84,9 @@
             </div>
         </td>
     </tr>
-    <Teleport v-if="changeBtnIsClicked" to="#show-window"><clientsChangeWindow v-model:open="changeBtnIsClicked"  :id="client.id"/> </Teleport>
+    <Teleport v-if="changeBtnIsClicked" to="#show-window">
+        <clientsChangeWindow v-model:open="changeBtnIsClicked" :id="client.id" />
+    </Teleport>
     <Teleport v-if="removeBtnIsClicked" to="#show-window">
         <clientsRemoveWindow v-model:open="removeBtnIsClicked" :id="client.id" />
     </Teleport>
@@ -107,13 +109,13 @@ export default {
     methods: {
         formatedDate(date) {
             let fullDate = new Date(date);
-            console.log(fullDate)
+
             let DateArr = [String(fullDate.getDate()).length == 1 ? "0" + String(fullDate.getDate()) : String(fullDate.getDate()), String(fullDate.getMonth()).length == 1 ? "0" + String(fullDate.getMonth()) : String(fullDate.getMonth()), fullDate.getFullYear()];
             return DateArr.join('.');
         },
         formatedTime(date) {
             let fullDate = new Date(date);
-            console.log(fullDate)
+
             let TimeArr = [String(fullDate.getHours()).length == 1 ? "0" + String(fullDate.getHours()) : String(fullDate.getHours()), String(fullDate.getMinutes()).length == 1 ? "0" + String(fullDate.getMinutes()) : String(fullDate.getMinutes())];
             return TimeArr.join(':');
         },
@@ -146,7 +148,6 @@ export default {
         updatedTime() {
             return this.formatedTime(this.client.updatedAt);
         },
-
     },
 
 }

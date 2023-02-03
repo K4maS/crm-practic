@@ -3,13 +3,20 @@
         min-width: 728px;
     }
 
+    .clients__content {
+        /* max-width: 900px */
+    }
+
     .clients__table {
         /* max-width: 900px */
     }
 
-    .clients__content {
-        /* max-width: 900px */
+    .clients__content .clients__table-header {
+        margin: 0 !important;
+        padding: 0;
     }
+
+
 
     .clients__table .table__content-block {
         flex-direction: column;

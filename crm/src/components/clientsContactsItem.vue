@@ -16,7 +16,7 @@
             VK: <a href="{{contact.value}}" class="tooltip-popup-link">{{ contact.value }}</a>
         </div>
     </li>
-    <li v-else-if="contact.type == 'Facebook'" class="table__item item tooltip-body">
+    <li v-else-if="contact.type == 'facebook'" class="table__item item tooltip-body">
         <a href="{{contact.value}}" class="item__social-link">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -74,7 +74,7 @@
         </a>
 
         <div class="tooltip-popup">
-            twitter: <a href="mailto:{{contact.value}}" class="tooltip-popup-link">{{ contact.value }}</a>
+            {{ contact.type }}: <a href="mailto:{{contact.value}}" class="tooltip-popup-link">{{ contact.value }}</a>
         </div>
     </li>
 

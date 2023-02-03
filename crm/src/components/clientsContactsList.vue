@@ -3,7 +3,7 @@
 
         <ClientsContactsItem :contact="contact" v-for="contact of contacts" :key="contact.value" />
 
-        <li v-if="clientsContacts.length > 5" class="table__item item ">
+        <li v-if="clientsContacts.length >= 5" class="table__item item ">
             <button v-if="!allContacts" class="item__social-btn btn-reset" @click="showAllContacts">
                 <div class="item__social-circle flex">
                     <p class="item__social-circle-number">+{{ clientsContacts.length - 4 }}</p>

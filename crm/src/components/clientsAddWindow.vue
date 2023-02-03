@@ -26,7 +26,7 @@
                             <p class="label-text text-gray-main">
                                 Фамилия*
                             </p>
-                            <input v-model="lastname" type="text"
+                            <input v-model="lastName" type="text"
                                 class="text-black-main form__input form__input-lastname" placeholder="Фамилия*"
                                 required>
                         </label>
@@ -42,14 +42,14 @@
                                 Отчество
                             </p>
                             <input v-model="surname" type="text" class="text-black-main form__input form__input-surname"
-                                placeholder="Отчество">
+                                placeholder="Отчество" required>
                         </label>
                     </div>
                     <div class="form__contact-block added-paddings flex">
                         <label v-for="item in contactsArr" :key="item.id" :id="'label-' + item.id" for="contact"
                             class="form__contact-label flex input-group">
 
-                            <select v-model="contactsArr[item.id].type" :name="'select-contact'"
+                            <select v-model="item.type" :name="'select-contact'"
                                 class="form__select-contact">
 
                                 <option :value="contactType.value" :name="'select-contact-' + contactType.id"
@@ -58,10 +58,10 @@
                                 </option>
 
                             </select>
-                            <input type="text" v-model="contactsArr[item.id].value" name="contact"
+                            <input type="text" v-model="item.value" name="contact"
                                 class="form__input-contact " placeholder="Введите данные контакта" required>
 
-                            <button @click.prevent="contactFormRemove(item.id)"
+                            <button v-if="item.id == contactsArr.length" @click.prevent="contactFormRemove(item.id - 1)"
                                 class="form__contact-remove-btn btn-reset">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -99,8 +99,10 @@
                     </div>
                     <div class="form_bottom flex">
                         <p v-if="addingDataError" class="form__error-message flex">
-                            Ошибка: новая модель организационной деятельности предполагает независимые способы
-                            реализации поставленных обществом задач!
+                        <ul class="form__errors-list list-style">
+                            <li class="form__errors-item" v-for="error of errorsArr" :key="error">
+                                {{ error.message }}</li>
+                        </ul>
                         </p>
                         <button class="form__save-btn btn btn-reset flex">
                             <svg v-if="addingData" width="16" height="16" viewBox="0 0 16 16" fill="none"
@@ -129,7 +131,6 @@
 </template>
 
 <script>
-// import { mapActions } from 'vuex';
 import contactTypes from '@/data/contactTypes';
 import axios from 'axios';
 import API_BASE_URL from "@/config";
@@ -139,11 +140,11 @@ export default {
     data() {
 
         return {
-            createdAt: '',
-            updatedAt: '',
+            // createdAt: '',
+            // updatedAt: '',
             name: '',
             surname: '',
-            lastname: '',
+            lastName: '',
 
             contactTypes,
             contactsArr: [],
@@ -152,6 +153,8 @@ export default {
             addingData: false,
             addingDataError: false,
 
+            errorsArr: [],
+
         }
     },
     props: { open: { type: Boolean }, },
@@ -159,50 +162,28 @@ export default {
         addClient() {
             this.addingData = true;
             this.addingDataError = false;
-            return axios.post(API_BASE_URL + 'api/clients/', {
-                createdAt: this.createdAt,
-                updatedAt: this.updatedAt,
+            return axios.post(API_BASE_URL + '/api/clients', {
+                // createdAt: this.createdAt,
+                // updatedAt: this.updatedAt,
                 name: this.name,
                 surname: this.surname,
                 lastName: this.lastName,
                 contacts: this.contactsArr,
             })
-                .catch(this.addingDataError = true)
-                .then(this.addingData = false);
+                .then(this.doClose(),)
+                .catch((answer) => { this.errorsArr = answer.response.data.errors },
+                    this.addingDataError = true)
+                .then(this.addingData = false,
+
+                    // временная затычка пока не смогу сделать стор
+                    setTimeout(function () {
+                        location.reload();
+                    }, 300)
+                );
 
         },
 
 
-        // ...mapActions(['addClient']),
-        // addClient() {
-        //     this.addingData = false;
-        //     this.addingDataError = false;
-
-        //     this.addClient({
-
-        //         createdAt: '2021-02-03T13:07:29.554Z',
-        //         updatedAt: '2021-12-13T13:15:44.554Z',
-        //         name: 'Василий',
-        //         surname: 'Пупкин',
-        //         lastName: 'Васильевич',
-        //         contacts: [
-        //             {
-        //                 type: 'Телефон',
-        //                 value: '+71234567890'
-        //             },
-        //             {
-        //                 type: 'Email',
-        //                 value: 'abc@xyz.com'
-        //             },
-        //             {
-        //                 type: 'Facebook',
-        //                 value: 'https://facebook.com/vasiliy-pupkin-the-best'
-        //             }
-        //         ]
-        //     })
-        //         .then(this.addingDataError = false,
-        //             this.addingData = false);
-        // },
         CreateId(arr) {
             let max = 0;
             for (const item of arr) {
@@ -217,8 +198,9 @@ export default {
             this.contactsArr = [];
         },
         contactFormAdd() {
-            this.contactsArr.push({ id: this.contactsId, type: 'Телефон', value: '' });
             this.contactsId = this.CreateId(this.contactsArr);
+            this.contactsArr.push({ id: this.CreateId(this.contactsArr), type: 'Телефон', value: '' });
+
         },
         contactFormRemove(labelId) {
             this.contactsArr.splice(labelId, 1);

@@ -1,5 +1,5 @@
 <template>
-    <table class="clients__table table" >
+    <table class="clients__table clients__table-header table">
 
         <tr class="table__header-row">
             <th class="table__header ">
@@ -67,7 +67,7 @@
         </tr>
 
         <!-- Table item here -->
-        <clientsTableItem :client="client" v-for="client in patch" :key="client.id" />
+        <clientsTableItem :client="client" v-for="client in clientsInfo" :key="client.id" />
 
 
     </table>
@@ -75,57 +75,27 @@
 
 <script>
 
-// import { mapGetters } from 'vuex';
 import clientsTableItem from './clientsTableItem.vue';
-
+import { mapGetters } from 'vuex';
 
 export default {
 
-    data() {
-        return {
-            patch: [{
-                id: '1234567890',
-                createdAt: '2021-02-03T13:01:29.554Z',
-                updatedAt: '2021-12-13T03:07:44.554Z',
-                name: 'Василий',
-                surname: 'Пупкин',
-                lastName: 'Васильевич',
-                contacts: [
-                    {
-                        type: 'Vk',
-                        value: 'abc@xyz.com'
-                    },
-                    {
-                        type: 'Twitter',
-                        value: 'abc@xyz.com'
-                    },
-                    {
-                        type: 'Телефон',
-                        value: '+71234567890'
-                    },
-                    {
-                        type: 'Email',
-                        value: 'abc@xyz.com'
-                    },
-                    {
-                        type: 'Facebook',
-                        value: 'https://facebook.com/vasiliy-pupkin-the-best'
-                    },
-                    {
-                        type: 'Одноклассники',
-                        value: 'https://facebook.com/vasiliy-pupkin-the-best'
-                    },
-                ],
-            },]
-        
-        };
-    },
+
 
     computed: {
-       
+        // ...mapState({ clients: 'сlients' }),
+        ...mapGetters({ clientsObj: 'allClients' }),
+
+        clients() {
+           return  this.clientsObj
+        },
     },
 
-    props: ['clientsInfo', 'loadingData', 'loadingDataError'],
+    props: [
+        // 'clientsInfo',
+        'loadingData',
+        'loadingDataError'
+    ],
 
     components: {
         clientsTableItem,

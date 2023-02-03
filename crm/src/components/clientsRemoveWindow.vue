@@ -24,14 +24,16 @@
                         </svg>
                     </button>
                 </div>
-                <form action="" class="delete-client__form window__form  form flex">
+                <form action="" @submit.prevent="removeClient()" class="delete-client__form window__form  form flex">
                     <div class="form_bottom flex">
-                        <p class="form__error-message flex">
-                            Ошибка: новая модель организационной деятельности предполагает независимые способы
-                            реализации поставленных обществом задач!
+                        <p v-if="addingDataError" class="form__error-message flex">
+                        <ul class="form__errors-list list-style">
+                            <li class="form__errors-item" v-for="error of errorsArr" :key="error">
+                                {{ error.message }}</li>
+                        </ul>
                         </p>
                         <button class="form__save-btn btn btn-reset flex">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                            <svg v-if="removingData" width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_224_6260)">
                                     <path
@@ -57,17 +59,42 @@
 
 </template>
 <script>
-
+import axios from 'axios';
+import API_BASE_URL from "@/config";
+import { 
+    // mapMutations,
+     mapActions
+     } from 'vuex';
 export default {
+    data() {
+        return {
+            removingData: false,
+            removingDataError: false,
+            errorsArr: [],
+        };
+    },
     props:
     {
-        
-        id: { type:  String },
+
+        id: { type: String },
         open: { type: Boolean },
     },
     methods: {
+        // ...mapMutations(['updateClients']),
+        ...mapActions(['']),
         doClose() {
             this.$emit('update:open', false);
+        },
+        removeClient() {
+            this.removingData = true;
+            this.removingDataError = false;
+            return axios.delete(API_BASE_URL + '/api/clients/' + this.id)
+                .then(this.loadClients())
+                .catch((answer) => { this.errorsArr = answer.response.data.errors },
+                    this.removingDataError = true)
+                .then(this.removingData = false,
+                );
+
         },
     },
 

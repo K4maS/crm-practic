@@ -1041,21 +1041,6 @@ main {}
 }
 
 
-/* changing */
-.changing__blackout {
-    display: none;
-}
-
-/* creating */
-.creating__blackout {
-    display: none;
-}
-
-/* .delete-client */
-
-.delete-client__blackout {
-    display: none;
-}
 
 .delete-client .delete-client__top-text {
     padding-left: 30px;
@@ -1078,5 +1063,5 @@ main {}
     text-align: center;
 }
 .delete-client__form .form__error-message {
-    display: none;
+    /* display: none; */
 }

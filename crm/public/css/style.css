@@ -237,6 +237,11 @@ main {}
 
 .clients {}
 
+.clients__content .clients__table-header {
+    margin: 0;
+    
+}
+
 .clients__table {
     width: 100%;
     border-collapse: collapse;
@@ -244,9 +249,11 @@ main {}
 }
 
 .clients__content {
+    overflow-y: auto;
     width: 100%;
     position: relative;
     min-height: 340px;
+    height: 343px;
     margin-bottom: 39px;
 }
 
@@ -335,7 +342,7 @@ main {}
 
 .clients__table .table__content-block {
     flex-wrap: wrap;
-    min-height: 60px;
+    min-height: 57px;
     align-items: center;
     font-weight: 400;
     text-align: left;
@@ -423,9 +430,11 @@ main {}
     fill: #9873FF;
     transition: fill 0.3s ease-in;
 }
+
 .clients__table .item__social-link:hover svg {
     fill: #703dfd;
 }
+
 .clients__table .item__social-link:focus {
     outline: 1px solid var(--preple-main);
 
@@ -494,7 +503,7 @@ main {}
 }
 
 .table__action-btn svg {
-   margin-right: 2px;
+    margin-right: 2px;
 
 
 }
@@ -612,6 +621,7 @@ main {}
 .weel-diasbled {
     display: none;
 }
+
 @keyframes weelRotation {
     0% {
         transform: rotate(0deg);
@@ -664,7 +674,9 @@ main {}
 }
 
 /* .window - стиль окон*/
-.window {z-index: 1010;}
+.window {
+    z-index: 1010;
+}
 
 .window__blackout {
     z-index: 1010;
@@ -795,9 +807,11 @@ main {}
     max-height: 500px;
     background: #c8c5d146;
 }
+
 .form__contact-list {
     margin-bottom: 10px;
 }
+
 .window__form .form__contact-label {
     flex-direction: row;
     /* display: none; */
@@ -998,6 +1012,10 @@ main {}
     color: #F06A4D;
 }
 
+.form__errors-list {
+    width: 100%
+}
+
 .form__save-btn {
     display: flex;
     align-items: center;
@@ -1090,6 +1108,7 @@ main {}
     display: flex;
     text-align: center;
 }
+
 .delete-client__form .form__error-message {
     display: none;
 }

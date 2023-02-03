@@ -24,10 +24,10 @@
             <h1 class="clients__title section__title">
               Клиенты
             </h1>
-            <div class="clients__content">
+            <div class="clients__content" data-simplebar>
               <!-- таблица с клиентами -->
 
-              <clientsTable :clients-info="clients" :loading-data="loadingData"
+              <clientsTable :clients-info="clientsObj" :loading-data="loadingData"
                 :loading-data-error="loadingDataError" />
 
               <!-- блок со спиннером загрузки страницы -->
@@ -72,18 +72,17 @@
 </template>
 
 <script>
-// import ClientsChangeWindow from './components/ClientsChangeWindow.vue';
-// import { CustomVue } from 'vuex';
+// import { mapState, mapGetters } from 'vuex';
 import clientsAddWindow from '@/components/clientsAddWindow.vue';
 import clientsTable from '@/components/clientsTable.vue';
-import axios from 'axios';
-import url from '@/config';
+// import axios from 'axios';
+// import API_BASE_URL from '@/config';
 
 export default {
 
   data() {
     return {
-      clientsData: [],
+      // clientsData: [],
 
       addButtonActive: false,
 
@@ -93,27 +92,39 @@ export default {
   },
 
   methods: {
+
+
+
     openCreateWindow() {
       console.log('произошло нажатие на кнопку добавления клиента')
       this.addButtonActive = true;
     },
-    loadClients() {
-      this.loadingData = true;
-      this.loadingDataError = false;
-      return axios.get(url + 'api/clients')
-        .catch(this.loadingDataError = true)
-        .then(this.loadingData = false);
 
-    },
+    // loadClients() {
+    //   this.loadingData = true;
+    //   this.loadingDataError = false;
+    //   return axios.get(API_BASE_URL + '/api/clients')
+    //     .then((response) => this.clientsData = response.data)
+    //     .catch(this.loadingDataError = true)
+    //     .then(this.loadingData = false);
 
+    // },
 
   },
   computed: {
-    clients() { return this.clientsData ? this.clientsData : []; },
+    // ...mapState({ clientsStore: 'clients' }),
+    // ...mapGetters({ clientsObj: 'allClients' }),
+
+    clients() {
+
+      return this.clientsData;
+
+    },
+
   },
 
   created() {
-    this.loadClients();
+  //   this.allClients();
   },
 
   components: { clientsTable, clientsAddWindow },

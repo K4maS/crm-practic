@@ -8,7 +8,7 @@
                         <h2 class="changing__title window__title text-black-main">
                             Изменить данные
                         </h2>
-                        <p class="changing__id window__id text-gray-main">ID: 123456</p>
+                        <p class="changing__id window__id text-gray-main">ID: {{ clientId }}</p>
                     </div>
 
                     <button class="changing__close-btn window__close-btn btn-reset" @click="doClose()">
@@ -19,100 +19,70 @@
                         </svg>
                     </button>
                 </div>
-                <form action="" class="changing__form window__form  form flex">
+
+                <form action="" @submit.prevent="chagingClient()" class="creating__form window__form  form flex">
                     <div class="form__names">
 
 
-                        <label for="surname" class="form__label form__label-surname">
+                        <label for="lastname" class="form__label form__label-lastname">
                             <p class="label-text text-gray-main">
                                 Фамилия*
                             </p>
-                            <input type="text" class="text-black-main form__input form__input-surname"
-                                placeholder="Фамилия*" required>
+                            <input v-model="lastName" type="text"
+                                class="text-black-main form__input form__input-lastname" placeholder="Фамилия*">
                         </label>
                         <label for="name" class="form__label form__label-name">
                             <p class="label-text text-gray-main">
                                 Имя*
                             </p>
-                            <input type="text" class="text-black-main form__input form__input-name" placeholder="Имя*"
-                                required>
+                            <input v-model="name" type="text" class="text-black-main form__input form__input-name"
+                                placeholder="Имя*">
                         </label>
-                        <label for="patronomyc" class="form__label form__label-patronomyc">
+                        <label for="surname" class="form__label form__label-surname">
                             <p class="label-text text-gray-main">
                                 Отчество
                             </p>
-                            <input type="text" class="text-black-main form__input form__input-patronomyc"
+                            <input v-model="surname" type="text" class="text-black-main form__input form__input-surname"
                                 placeholder="Отчество">
                         </label>
                     </div>
                     <div class="form__contact-block added-paddings flex">
-                        <ul class="list-style form__contact-list">
-                            <li class="form__contact-item item">
-                                <label for="contact" class="form__contact-label flex input-group">
+                        <label v-for="item in contactsArr" :key="item.id" :id="'label-' + item.id" for="contact"
+                            class="form__contact-label flex input-group">
 
-                                    <select name="select-contact" id="" class="form__select-contact">
-                                        <option value="phone" aria-checked="true">Tелефон</option>
-                                        <option value="addition phone">Доп. телефон</option>
-                                        <option value="Email">Email</option>
-                                        <option value="Vk">Vk</option>
-                                        <option value="Facebook">Facebook</option>
-                                    </select>
-                                    <input type="text" name="contact" class="form__input-contact "
-                                        placeholder="Введите данные контакта" required>
+                            <select v-model="item.type" :name="'select-contact'" class="form__select-contact">
 
-                                    <button class="form__contact-remove-btn btn-reset">
-                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <g clip-path="url(#clip0_224_6681)">
-                                                <path
-                                                    d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z"
-                                                    fill="#B0B0B0" />
-                                            </g>
-                                            <defs>
-                                                <clipPath id="clip0_224_6681">
-                                                    <rect width="16" height="16" fill="white" />
-                                                </clipPath>
-                                            </defs>
-                                        </svg>
-                                    </button>
+                                <option :value="contactType.value" :name="'select-contact-' + contactType.id"
+                                    v-for="contactType of contactTypes" :key="contactType.id">
+                                    {{ contactType.value }}
+                                </option>
 
-                                </label>
-                            </li>
-                            <li class="form__contact-item item"> <label for="contact"
-                                    class="form__contact-label input-group">
+                            </select>
+                            <input type="text" v-model="item.value" name="contact" class="form__input-contact "
+                                placeholder="Введите данные контакта" required>
 
-                                    <select name="select-contact" id="" class="form__select-contact">
-                                        <option value="phone" aria-checked="true">Tелефон</option>
-                                        <option value="addition phone">Доп. телефон</option>
-                                        <option value="Email">Email</option>
-                                        <option value="Vk">Vk</option>
-                                        <option value="Facebook">Facebook</option>
-                                    </select>
-                                    <input type="text" name="contact" class="form__input-contact"
-                                        placeholder="Введите данные контакта" required>
+                            <button v-if="item.id - 1 == contactsArr.length"
+                                @click.prevent="contactFormRemove(item.id - 1)"
+                                class="form__contact-remove-btn btn-reset">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_224_6681)">
+                                        <path
+                                            d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z"
+                                            fill="#B0B0B0" />
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_224_6681">
+                                            <rect width="16" height="16" fill="white" />
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </button>
 
-                                    <button class="form__contact-remove-btn btn-reset">
-                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <g clip-path="url(#clip0_224_6681)">
-                                                <path
-                                                    d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z"
-                                                    fill="#B0B0B0" />
-                                            </g>
-                                            <defs>
-                                                <clipPath id="clip0_224_6681">
-                                                    <rect width="16" height="16" fill="white" />
-                                                </clipPath>
-                                            </defs>
-                                        </svg>
-                                    </button>
+                        </label>
 
-                                </label>
-                            </li>
-                        </ul>
-
-
-                        <button class="form__add-contact btn-reset text-black-main">
+                        <button v-if="contactsArr.length < 8" @click.prevent="contactFormAdd"
+                            class="form__add-contact btn-reset text-black-main">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_224_4420)">
@@ -129,12 +99,14 @@
                         </button>
                     </div>
                     <div class="form_bottom flex">
-                        <p class="form__error-message flex">
-                            Ошибка: новая модель организационной деятельности предполагает независимые способы
-                            реализации поставленных обществом задач!
+                        <p v-if="addingDataError" class="form__error-message flex">
+                        <ul class="form__errors-list list-style">
+                            <li class="form__errors-item" v-for="error of errorsArr" :key="error">
+                                {{ error.message }}</li>
+                        </ul>
                         </p>
                         <button class="form__save-btn btn btn-reset flex">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                            <svg v-if="addingData" width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_224_6260)">
                                     <path
@@ -149,10 +121,11 @@
                                 </defs>
                             </svg>
                             Сохранить</button>
-                        <button class="form__delete-client-btn btn-reset">Удалить клиента</button>
+                        <button @click.prevent="doClose" class="form__delete-client-btn btn-reset">Отмена</button>
                     </div>
 
                 </form>
+
 
             </div>
         </div>
@@ -161,18 +134,125 @@
 </template>
 
 <script>
+import contactTypes from '@/data/contactTypes';
+import axios from 'axios';
+import API_BASE_URL from "@/config";
+
 
 export default {
-    props: {
-        open: { type: Boolean, },
-        id: { type: String },
+    data() {
+
+        return {
+            clientData: [],
+
+
+            clientId: '',
+            createdAt: '',
+            updatedAt: '',
+            name: '',
+            surname: '',
+            lastName: '',
+
+            contactTypes,
+            contactsArr: [],
+            contactsId: 0,
+
+            addingData: false,
+            addingDataError: false,
+
+            errorsArr: [],
+
+        }
     },
+    props: { open: { type: Boolean }, id: { type: String }, },
     methods: {
+        chagingClient() {
+            this.addingData = true;
+            this.addingDataError = false;
+            return axios.patch(API_BASE_URL + '/api/clients/' + this.id, {
+                createdAt: this.createdAt,
+                updatedAt: this.updatedAt,
+                name: this.name,
+                surname: this.surname,
+                lastName: this.lastName,
+                contacts: this.contactsArr,
+            })
+                .then(
+                    // временная затычка пока не смогу сделать стор
+                    setTimeout(function () {
+                        location.reload();
+                    }, 300)
+                )
+                .catch(
+                    (answer) => { this.errorsArr = answer.response.data.errors },
+                    this.addingDataError = true,
+                )
+                .then(
+                    this.addingData = false,
+                );
+
+        },
+
+        loadClient() {
+
+            this.removingData = true;
+            this.removingDataError = false;
+            return axios.get(API_BASE_URL + '/api/clients/' + this.id)
+                .then((response) => {
+
+                    this.clientId = response.data.id,
+                        this.name = response.data.name,
+                        this.surname = response.data.surname,
+                        this.lastName = response.data.lastName,
+                        this.contactsArr = this.addId(response.data.contacts)
+                })
+                .catch((answer) => { return answer.response.data.errors },
+                    this.removingDataError = true)
+                .then(this.removingData = false,
+                );
+
+        },
+
+        CreateId(arr) {
+            let max = 0;
+            for (const item of arr) {
+
+                if (item.id >= max) { max = item.id; }
+
+            }
+            return max + 1;
+        },
+        addId(array) {
+            let localId = 0;
+            array.forEach((elem) => {
+                elem.id = localId;
+                localId += 1;
+            });
+            return array
+        },
+        contactFormAdd() {
+            this.contactsId = this.CreateId(this.contactsArr);
+            this.contactsArr.push({ id: this.CreateId(this.contactsArr), type: 'Телефон', value: '' });
+
+        },
+        contactFormRemove(labelId) {
+            this.contactsArr.splice(labelId, 1);
+        },
         doClose() {
             this.$emit('update:open', false);
+            this.contactsArr = [];
         },
     },
+    computed: {
 
 
+
+
+    },
+    created() {
+        this.loadClient();
+        this.contactsArr = this.addId(this.contactsArr);
+        console.log(this.contactsArr)
+    },
 }
 </script>
