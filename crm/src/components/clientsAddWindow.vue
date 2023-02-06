@@ -1,6 +1,6 @@
 <template>
     <section v-if="open" class="creating window">
-        <div class="creating__blackout window__blackout flex">
+        <div class="creating__blackout window__blackout flex" @click="onOutsideClick">
             <div class="creating__block window__block flex">
 
                 <div class="creating__top window__top flex">
@@ -18,39 +18,46 @@
                         </svg>
                     </button>
                 </div>
-                <form action="" @submit.prevent="addClient()" class="creating__form window__form  form flex">
+                <form action="" @submit.prevent="doAddClient()" class="creating__form window__form  form flex">
                     <div class="form__names">
 
 
-                        <label for="lastname" class="form__label form__label-lastname">
-                            <p class="label-text text-gray-main">
+                        <label for="surname" class="form__label form__label-surname">
+                            <p v-if="surname" class="label-text text-gray-main">
                                 Фамилия*
                             </p>
-                            <input v-model="lastName" type="text"
-                                class="text-black-main form__input form__input-lastname" placeholder="Фамилия*"
-                                required>
-                        </label>
-                        <label for="name" class="form__label form__label-name">
-                            <p class="label-text text-gray-main">
-                                Имя*
-                            </p>
-                            <input v-model="name" type="text" class="text-black-main form__input form__input-name"
-                                placeholder="Имя*" required>
-                        </label>
-                        <label for="surname" class="form__label form__label-surname">
-                            <p class="label-text text-gray-main">
-                                Отчество
+                            <p v-else class="label-text-empty">
+
                             </p>
                             <input v-model="surname" type="text" class="text-black-main form__input form__input-surname"
-                                placeholder="Отчество" required>
+                                placeholder="Фамилия*">
+                        </label>
+                        <label for="name" class="form__label form__label-name">
+                            <p v-if="name" class="label-text text-gray-main">
+                                Имя*
+                            </p>
+                            <p v-else class="label-text-empty">
+
+                            </p>
+                            <input v-model="name" type="text" class="text-black-main form__input form__input-name"
+                                placeholder="Имя*">
+                        </label>
+                        <label for="lastName" class="form__label form__label-lastName">
+                            <p v-if="lastName" class="label-text text-gray-main">
+                                Отчество
+                            </p>
+                            <p v-else class="label-text-empty">
+
+                            </p>
+                            <input v-model="lastName" type="text"
+                                class="text-black-main form__input form__input-lastName" placeholder="Отчество">
                         </label>
                     </div>
-                    <div class="form__contact-block added-paddings flex">
+                    <div class="form__contact-block added-paddings flex" data-simplebar>
                         <label v-for="item in contactsArr" :key="item.id" :id="'label-' + item.id" for="contact"
                             class="form__contact-label flex input-group">
 
-                            <select v-model="item.type" :name="'select-contact'"
-                                class="form__select-contact">
+                            <select v-model="item.type" :name="'select-contact'" class="form__select-contact">
 
                                 <option :value="contactType.value" :name="'select-contact-' + contactType.id"
                                     v-for="contactType of contactTypes" :key="contactType.id">
@@ -58,10 +65,10 @@
                                 </option>
 
                             </select>
-                            <input type="text" v-model="item.value" name="contact"
-                                class="form__input-contact " placeholder="Введите данные контакта" required>
+                            <input type="text" v-model="item.value" name="contact" class="form__input-contact "
+                                placeholder="Введите данные контакта" required>
 
-                            <button v-if="item.id == contactsArr.length" @click.prevent="contactFormRemove(item.id - 1)"
+                            <button @click.prevent="contactFormRemove(item.id - 1)"
                                 class="form__contact-remove-btn btn-reset">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -80,7 +87,7 @@
 
                         </label>
 
-                        <button v-if="contactsArr.length < 8" @click.prevent="contactFormAdd"
+                        <button v-if="contactsArr.length < 10" @click.prevent="contactFormAdd"
                             class="form__add-contact btn-reset text-black-main">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -98,14 +105,14 @@
                         </button>
                     </div>
                     <div class="form_bottom flex">
-                        <p v-if="addingDataError" class="form__error-message flex">
+                        <p v-if="error" class="form__error-message flex">
                         <ul class="form__errors-list list-style">
-                            <li class="form__errors-item" v-for="error of errorsArr" :key="error">
+                            <li class="form__errors-item" v-for="error of errors" :key="error">
                                 {{ error.message }}</li>
                         </ul>
                         </p>
                         <button class="form__save-btn btn btn-reset flex">
-                            <svg v-if="addingData" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                            <svg v-if="loading" width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_224_6260)">
                                     <path
@@ -132,16 +139,13 @@
 
 <script>
 import contactTypes from '@/data/contactTypes';
-import axios from 'axios';
-import API_BASE_URL from "@/config";
+import { mapActions, mapGetters } from 'vuex';
 
 
 export default {
     data() {
 
         return {
-            // createdAt: '',
-            // updatedAt: '',
             name: '',
             surname: '',
             lastName: '',
@@ -150,36 +154,29 @@ export default {
             contactsArr: [],
             contactsId: 0,
 
-            addingData: false,
-            addingDataError: false,
 
-            errorsArr: [],
 
         }
     },
     props: { open: { type: Boolean }, },
-    methods: {
-        addClient() {
-            this.addingData = true;
-            this.addingDataError = false;
-            return axios.post(API_BASE_URL + '/api/clients', {
-                // createdAt: this.createdAt,
-                // updatedAt: this.updatedAt,
-                name: this.name,
-                surname: this.surname,
-                lastName: this.lastName,
-                contacts: this.contactsArr,
-            })
-                .then(this.doClose(),)
-                .catch((answer) => { this.errorsArr = answer.response.data.errors },
-                    this.addingDataError = true)
-                .then(this.addingData = false,
+    computed: {
 
-                    // временная затычка пока не смогу сделать стор
-                    setTimeout(function () {
-                        location.reload();
-                    }, 300)
-                );
+        ...mapGetters({
+            loading: 'loadingProcess',
+            error: 'loadingError',
+            errors: 'errors',
+        }
+        ),
+    },
+    methods: {
+        ...mapActions(['addClients']),
+        doAddClient() {
+            this.addClients({ name: this.name, surname: this.surname, lastName: this.lastName, contacts: this.contactsArr });
+            console.log(this.contactsArr)
+            if (this.errors == false) {
+                console.log('Ошибки нет, нужно закрыть')
+                this.doClose()
+            }
 
         },
 
@@ -196,6 +193,16 @@ export default {
         doClose() {
             this.$emit('update:open', false);
             this.contactsArr = [];
+            this.name = '';
+            this.surname = '';
+            this.lastName = '';
+            this.contactsArr = [];
+        },
+
+        onOutsideClick($event) {
+            if ($event.target !== this.$refs.content && $event.target.contains(this.$refs.content)) {
+                this.doClose();
+            }
         },
         contactFormAdd() {
             this.contactsId = this.CreateId(this.contactsArr);

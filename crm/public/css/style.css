@@ -149,6 +149,10 @@ main {}
     padding: 0;
 }
 
+.body .simplebar-content-wrapper {
+    position: static;
+}
+
 /* header */
 .header {
     margin-bottom: 40px;
@@ -244,6 +248,7 @@ main {}
 
 .clients__table {
     width: 100%;
+    margin-bottom: 0;
     border-collapse: collapse;
     z-index: 50;
 }
@@ -770,7 +775,11 @@ main {}
     font-size: 10px;
     line-height: 14px;
 }
-
+.label-text-empty {
+    height: 14px;
+    margin: 0;
+    padding: 0;
+}
 .window__form .form__input {
     width: 100%;
     height: 28px;
@@ -801,7 +810,7 @@ main {}
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 8px 30px;
+    /* padding: 8px 30px; */
     margin-bottom: 25px;
     min-height: 35px;
     max-height: 500px;
@@ -963,6 +972,7 @@ main {}
 
 .form__add-contact {
     align-items: center;
+    width: 100%;
 }
 
 .form__add-contact svg {
@@ -1044,7 +1054,7 @@ main {}
     border-color: var(--perple-light);
     outline: none;
 }
-
+.form__save-btn svg {color: transparent;}
 .form__save-btn svg {
     /* display: none; */
     animation: weelRotation normal 2s linear infinite;

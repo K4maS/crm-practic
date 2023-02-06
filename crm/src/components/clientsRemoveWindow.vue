@@ -1,6 +1,6 @@
 <template>
     <section class="delete-client window">
-        <div class="delete-client__blackout window__blackout flex">
+        <div class="delete-client__blackout window__blackout flex" @click="onOutsideClick">
             <div class="delete-client__block window__block flex">
 
                 <div class="delete-client__top window__top flex">
@@ -26,14 +26,14 @@
                 </div>
                 <form action="" @submit.prevent="removeClient()" class="delete-client__form window__form  form flex">
                     <div class="form_bottom flex">
-                        <p v-if="addingDataError" class="form__error-message flex">
+                        <p v-if="loadingError" class="form__error-message flex">
                         <ul class="form__errors-list list-style">
-                            <li class="form__errors-item" v-for="error of errorsArr" :key="error">
+                            <li class="form__errors-item" v-for="error of errors" :key="error">
                                 {{ error.message }}</li>
                         </ul>
                         </p>
                         <button class="form__save-btn btn btn-reset flex">
-                            <svg v-if="removingData" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                            <svg v-if="loadingProcess" width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_224_6260)">
                                     <path
@@ -59,12 +59,13 @@
 
 </template>
 <script>
-import axios from 'axios';
-import API_BASE_URL from "@/config";
-import { 
-    // mapMutations,
-     mapActions
-     } from 'vuex';
+import {
+    mapGetters,
+    mapMutations,
+    mapActions
+} from 'vuex';
+
+
 export default {
     data() {
         return {
@@ -79,22 +80,29 @@ export default {
         id: { type: String },
         open: { type: Boolean },
     },
+
+    computed: {
+
+        ...mapGetters([
+            'loadingProcess',
+            'loadingError',
+            'errors',
+        ]),
+    },
     methods: {
-        // ...mapMutations(['updateClients']),
-        ...mapActions(['']),
+        ...mapMutations(['updateClients']),
+        ...mapActions(['removeClients']),
         doClose() {
             this.$emit('update:open', false);
         },
+        onOutsideClick($event) {
+            if ($event.target !== this.$refs.content && $event.target.contains(this.$refs.content)) {
+                this.doClose();
+            }
+        },
         removeClient() {
-            this.removingData = true;
-            this.removingDataError = false;
-            return axios.delete(API_BASE_URL + '/api/clients/' + this.id)
-                .then(this.loadClients())
-                .catch((answer) => { this.errorsArr = answer.response.data.errors },
-                    this.removingDataError = true)
-                .then(this.removingData = false,
-                );
-
+            this.removeClients(this.id);
+            if (!this.loadingError) this.doClose
         },
     },
 

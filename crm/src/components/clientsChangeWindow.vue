@@ -1,6 +1,6 @@
 <template>
     <section class="changing window">
-        <div class="changing__blackout window__blackout flex">
+        <div class="changing__blackout window__blackout flex" @click="onOutsideClick">
             <div class="changing__block window__block flex">
 
                 <div class="changing__top window__top flex">
@@ -20,33 +20,42 @@
                     </button>
                 </div>
 
-                <form action="" @submit.prevent="chagingClient()" class="creating__form window__form  form flex">
+                <form action="" @submit.prevent="doChagingClient()" class="creating__form window__form  form flex">
                     <div class="form__names">
 
 
-                        <label for="lastname" class="form__label form__label-lastname">
-                            <p class="label-text text-gray-main">
+                        <label for="surname" class="form__label form__label-surname">
+                            <p v-if="surname" class="label-text text-gray-main">
                                 Фамилия*
                             </p>
-                            <input v-model="lastName" type="text"
-                                class="text-black-main form__input form__input-lastname" placeholder="Фамилия*">
+                            <p v-else class="label-text-empty">
+
+                            </p>
+                            <input v-model="surname" type="text" class="text-black-main form__input form__input-surname"
+                                placeholder="Фамилия*">
                         </label>
                         <label for="name" class="form__label form__label-name">
-                            <p class="label-text text-gray-main">
+                            <p v-if="name" class="label-text text-gray-main">
                                 Имя*
+                            </p>
+                            <p v-else class="label-text-empty">
+
                             </p>
                             <input v-model="name" type="text" class="text-black-main form__input form__input-name"
                                 placeholder="Имя*">
                         </label>
-                        <label for="surname" class="form__label form__label-surname">
-                            <p class="label-text text-gray-main">
+                        <label for="lastName" class="form__label form__label-lastName">
+                            <p v-if="lastName" class="label-text text-gray-main">
                                 Отчество
                             </p>
-                            <input v-model="surname" type="text" class="text-black-main form__input form__input-surname"
-                                placeholder="Отчество">
+                            <p v-else class="label-text-empty">
+
+                            </p>
+                            <input v-model="lastName" type="text"
+                                class="text-black-main form__input form__input-lastName" placeholder="Отчество">
                         </label>
                     </div>
-                    <div class="form__contact-block added-paddings flex">
+                    <div class="form__contact-block added-paddings flex" data-simplebar>
                         <label v-for="item in contactsArr" :key="item.id" :id="'label-' + item.id" for="contact"
                             class="form__contact-label flex input-group">
 
@@ -61,8 +70,7 @@
                             <input type="text" v-model="item.value" name="contact" class="form__input-contact "
                                 placeholder="Введите данные контакта" required>
 
-                            <button v-if="item.id - 1 == contactsArr.length"
-                                @click.prevent="contactFormRemove(item.id - 1)"
+                            <button @click.prevent="contactFormRemove(item.id - 1)"
                                 class="form__contact-remove-btn btn-reset">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -81,7 +89,7 @@
 
                         </label>
 
-                        <button v-if="contactsArr.length < 8" @click.prevent="contactFormAdd"
+                        <button v-if="contactsArr.length < 10" @click.prevent="contactFormAdd"
                             class="form__add-contact btn-reset text-black-main">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -99,14 +107,14 @@
                         </button>
                     </div>
                     <div class="form_bottom flex">
-                        <p v-if="addingDataError" class="form__error-message flex">
+                        <p v-if="error" class="form__error-message flex">
                         <ul class="form__errors-list list-style">
-                            <li class="form__errors-item" v-for="error of errorsArr" :key="error">
+                            <li class="form__errors-item" v-for="error of errors" :key="error">
                                 {{ error.message }}</li>
                         </ul>
                         </p>
                         <button class="form__save-btn btn btn-reset flex">
-                            <svg v-if="addingData" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                            <svg v-if="loading" width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_224_6260)">
                                     <path
@@ -121,7 +129,8 @@
                                 </defs>
                             </svg>
                             Сохранить</button>
-                        <button @click.prevent="doClose" class="form__delete-client-btn btn-reset">Отмена</button>
+                        <button @click.prevent="doRmove" class="form__delete-client-btn btn-reset">Удалить
+                            клиента</button>
                     </div>
 
                 </form>
@@ -131,12 +140,18 @@
         </div>
     </section>
 
+
 </template>
 
 <script>
 import contactTypes from '@/data/contactTypes';
 import axios from 'axios';
 import API_BASE_URL from "@/config";
+import {
+    mapGetters,
+    mapActions,
+    mapMutations
+} from 'vuex';
 
 
 export default {
@@ -157,46 +172,25 @@ export default {
             contactsArr: [],
             contactsId: 0,
 
-            addingData: false,
-            addingDataError: false,
-
-            errorsArr: [],
-
         }
     },
-    props: { open: { type: Boolean }, id: { type: String }, },
+    props: { open: { type: Boolean }, openRemove: { type: Boolean }, id: { type: String }, },
     methods: {
-        chagingClient() {
-            this.addingData = true;
-            this.addingDataError = false;
-            return axios.patch(API_BASE_URL + '/api/clients/' + this.id, {
-                createdAt: this.createdAt,
-                updatedAt: this.updatedAt,
-                name: this.name,
-                surname: this.surname,
-                lastName: this.lastName,
-                contacts: this.contactsArr,
-            })
-                .then(
-                    // временная затычка пока не смогу сделать стор
-                    setTimeout(function () {
-                        location.reload();
-                    }, 300)
-                )
-                .catch(
-                    (answer) => { this.errorsArr = answer.response.data.errors },
-                    this.addingDataError = true,
-                )
-                .then(
-                    this.addingData = false,
-                );
-
+        ...mapMutations(['updateCurrentId', 'updateProcessChanging', 'updateProcessError']),
+        ...mapActions(['changeClients']),
+        doChagingClient() {
+            this.changeClients({ id: this.id, name: this.name, surname: this.surname, lastName: this.lastName, contacts: this.contactsArr });
+            console.log(this.contactsArr)
+            if (this.errors == false) {
+                console.log('Ошибки нет, нужно закрыть')
+                this.doClose()
+            }
         },
 
         loadClient() {
+            this.updateProcessChanging(true);
+            this.updateProcessError(false);
 
-            this.removingData = true;
-            this.removingDataError = false;
             return axios.get(API_BASE_URL + '/api/clients/' + this.id)
                 .then((response) => {
 
@@ -205,11 +199,14 @@ export default {
                         this.surname = response.data.surname,
                         this.lastName = response.data.lastName,
                         this.contactsArr = this.addId(response.data.contacts)
+                    this.updateClients(response.data)
                 })
-                .catch((answer) => { return answer.response.data.errors },
-                    this.removingDataError = true)
-                .then(this.removingData = false,
-                );
+                .catch((answer) => {
+                    console.log(answer.response);
+                    this.updateProcessError(true);
+                })
+                .then(this.updateProcessChanging(false),)
+
 
         },
 
@@ -240,19 +237,42 @@ export default {
         },
         doClose() {
             this.$emit('update:open', false);
+            this.name = '';
+            this.surname = '';
+            this.lastName = '';
             this.contactsArr = [];
+
+        },
+        onOutsideClick($event) {
+            if ($event.target !== this.$refs.content && $event.target.contains(this.$refs.content)) {
+                this.doClose();
+            }
+        },
+        doRmove() {
+            this.doClose();
+            this.$emit('update:openRemove', true);
+
+
         },
     },
     computed: {
 
-
-
+        ...mapGetters({
+            loading: 'loadingProcess',
+            error: 'loadingError',
+            errors: 'errors',
+        })
 
     },
     created() {
+        this.updateCurrentId(this.id);
         this.loadClient();
         this.contactsArr = this.addId(this.contactsArr);
         console.log(this.contactsArr)
     },
+    watch: {
+
+    },
+    components: {},
 }
 </script>

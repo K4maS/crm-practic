@@ -43,13 +43,9 @@
                         <!-- table-change--onload -->
                         <button @click.prevent="clickChangeBtn"
                             class="table__change table__action-btn btn-reset text-black-main flex">
-                            <svg class="svg-pencil" width="13" height="13" viewBox="0 0 13 13" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M0 10.5002V13.0002H2.5L9.87333 5.62687L7.37333 3.12687L0 10.5002ZM11.8067 3.69354C12.0667 3.43354 12.0667 3.01354 11.8067 2.75354L10.2467 1.19354C9.98667 0.933535 9.56667 0.933535 9.30667 1.19354L8.08667 2.41354L10.5867 4.91354L11.8067 3.69354Z" />
-                            </svg>
-                            <svg class="svg-loading" width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
+
+                            <svg v-if="loadingProcess && client.id == getCurrentId" class="svg-loading" width="16"
+                                height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_224_2771)">
                                     <path
                                         d="M3.00008 8.04008C3.00008 10.8236 5.2566 13.0801 8.04008 13.0801C10.8236 13.0801 13.0801 10.8236 13.0801 8.04008C13.0801 5.2566 10.8236 3.00008 8.04008 3.00008C7.38922 3.00008 6.7672 3.12342 6.196 3.34812"
@@ -62,7 +58,11 @@
                                     </clipPath>
                                 </defs>
                             </svg>
-
+                            <svg v-else class="svg-pencil" width="13" height="13" viewBox="0 0 13 13" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M0 10.5002V13.0002H2.5L9.87333 5.62687L7.37333 3.12687L0 10.5002ZM11.8067 3.69354C12.0667 3.43354 12.0667 3.01354 11.8067 2.75354L10.2467 1.19354C9.98667 0.933535 9.56667 0.933535 9.30667 1.19354L8.08667 2.41354L10.5867 4.91354L11.8067 3.69354Z" />
+                            </svg>
 
                             Изменить
                         </button>
@@ -85,7 +85,8 @@
         </td>
     </tr>
     <Teleport v-if="changeBtnIsClicked" to="#show-window">
-        <clientsChangeWindow v-model:open="changeBtnIsClicked" :id="client.id" />
+        <clientsChangeWindow v-model:open="changeBtnIsClicked" v-model:open-remove="removeBtnIsClicked"
+            :id="client.id" />
     </Teleport>
     <Teleport v-if="removeBtnIsClicked" to="#show-window">
         <clientsRemoveWindow v-model:open="removeBtnIsClicked" :id="client.id" />
@@ -97,6 +98,7 @@ import clientsContactsList from './clientsContactsList.vue';
 import clientsChangeWindow from './clientsChangeWindow.vue';
 import clientsRemoveWindow from './clientsRemoveWindow.vue';
 import { Teleport } from 'vue';
+import { mapGetters } from 'vuex';
 
 export default {
     props: ['client'],
@@ -131,8 +133,14 @@ export default {
     components: { clientsContactsList, clientsChangeWindow, clientsRemoveWindow, Teleport },
 
     computed: {
+        ...mapGetters([
+            'loadingProcess',
+            'loadingError',
+            'errors',
+            'getCurrentId',
+        ]),
         fullName() {
-            let fullNameArr = [this.client.surname, this.client.name, this.client.lastName]
+            let fullNameArr = [this.client.lastName, this.client.name, this.client.surname,]
             return fullNameArr.join(' ');
         },
         crateDate() {

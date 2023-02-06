@@ -1,7 +1,7 @@
 export default [
-    { id: 0, value: 'Телефон' },
-    { id: 1, value: 'Доп. телефон' },
-    { id: 2, value: 'Email' },
-    { id: 3, value: 'Vk' },
-    { id: 4, value: 'facebook' },
+    { id: 0, value: 'Телефон', inputType: 'tel' },
+    { id: 1, value: 'Доп. телефон', inputType: 'tel' },
+    { id: 2, value: 'Email', inputType: 'email' },
+    { id: 3, value: 'Vk', inputType: 'text' },
+    { id: 4, value: 'facebook', inputType: 'text' },
 ]

@@ -1,22 +1,7 @@
 <template>
 
   <div class="">
-    <header class="header">
-      <div class="hedear__container ">
-        <div class="container flex">
-          <a href="#" class="header__link">
-            <div class="header__link-logo flex">
-              skb.
-            </div>
-          </a>
-
-          <nav class="header__nav flex nav">
-            <input type="search" placeholder="Введите запрос" class="nav__search">
-          </nav>
-        </div>
-
-      </div>
-    </header>
+    <cliensHeader />
     <main class="main">
       <section class="clients">
         <div class="container">
@@ -24,16 +9,17 @@
             <h1 class="clients__title section__title">
               Клиенты
             </h1>
+          
             <div class="clients__content" data-simplebar>
+
               <!-- таблица с клиентами -->
 
-              <clientsTable :clients-info="clientsObj" :loading-data="loadingData"
-                :loading-data-error="loadingDataError" />
+              <clientsTable :loading-data="loadingProcess" :loading-data-error="loadingError" />
 
               <!-- блок со спиннером загрузки страницы -->
               <div class="clients__table-loading flex">
-                <svg v-if="loadingData" class="clients__table-loading-weel " width="40" height="40" viewBox="0 0 40 40"
-                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg v-if="loadingProcess" class="clients__table-loading-weel " width="40" height="40"
+                  viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M2 20C2 29.941 10.059 38 20 38C29.941 38 38 29.941 38 20C38 10.059 29.941 2 20 2C17.6755 2 15.454 2.4405 13.414 3.243"
                     stroke="#9873FF" stroke-width="4" stroke-miterlimit="10" stroke-linecap="round" />
@@ -72,62 +58,41 @@
 </template>
 
 <script>
-// import { mapState, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import clientsAddWindow from '@/components/clientsAddWindow.vue';
 import clientsTable from '@/components/clientsTable.vue';
-// import axios from 'axios';
-// import API_BASE_URL from '@/config';
-
+import cliensHeader from '@/components/clientsHeader.vue'
 export default {
 
   data() {
     return {
-      // clientsData: [],
-
       addButtonActive: false,
-
-      loadingData: false,
-      loadingDataError: false,
     }
   },
 
   methods: {
-
-
 
     openCreateWindow() {
       console.log('произошло нажатие на кнопку добавления клиента')
       this.addButtonActive = true;
     },
 
-    // loadClients() {
-    //   this.loadingData = true;
-    //   this.loadingDataError = false;
-    //   return axios.get(API_BASE_URL + '/api/clients')
-    //     .then((response) => this.clientsData = response.data)
-    //     .catch(this.loadingDataError = true)
-    //     .then(this.loadingData = false);
-
-    // },
-
   },
   computed: {
-    // ...mapState({ clientsStore: 'clients' }),
-    // ...mapGetters({ clientsObj: 'allClients' }),
-
-    clients() {
-
-      return this.clientsData;
-
-    },
-
+    ...mapActions(['loadClients']),
+    ...mapGetters([
+      'loadingProcess',
+      'loadingError',
+      'errors',
+    ]),
   },
 
   created() {
-  //   this.allClients();
+    this.loadClients;
   },
 
-  components: { clientsTable, clientsAddWindow },
+
+  components: { clientsTable, clientsAddWindow, cliensHeader, },
 }
 </script>
 
