@@ -26,10 +26,21 @@ export default {
             value: this.searchValue,
         };
 
+
+
     },
 
     methods: {
         ...mapMutations(['updateFilteredClients', 'updateSearchValue']),
+        loadValue() {
+            clearTimeout(this.loadProductsTimer),
+
+                this.loadProductsTimer = setTimeout(() => {
+                    this.updateFilteredClients(this.value);
+                    this.updateSearchValue(this.value);
+                }, 300);
+        },
+
     },
 
     computed: {
@@ -37,9 +48,9 @@ export default {
     },
 
     watch: {
+
         value() {
-            this.updateFilteredClients(this.value);
-            this.updateSearchValue(this.value);
+            this.loadValue()
         },
 
     },

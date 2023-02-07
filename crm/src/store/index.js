@@ -109,11 +109,14 @@ export default createStore({
 
         },
 
-        getClient(ctx, id) {
+        loadCurrentClient(ctx, id) {
             ctx.commit('updateProcessChanging', true);
             ctx.commit('updateProcessError', false);
             return axios.get(API_BASE_URL + '/api/clients/' + id)
-                .then((response) => { ctx.commit('updateCurrentClient', response.data); },)
+                .then((response) => {
+                    console.log(response.data)
+                    ctx.commit('updateCurrentClient', response.data);
+                },)
                 .catch((response) => {
                     ctx.commit('updateProcessError', true);
                     ctx.commit('updateError', response)

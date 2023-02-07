@@ -1,7 +1,7 @@
 <template>
     <section v-if="open" class="creating window">
         <div class="creating__blackout window__blackout flex" @click="onOutsideClick">
-            <div class="creating__block window__block flex">
+            <div ref="content" class="creating__block window__block flex">
 
                 <div class="creating__top window__top flex">
                     <div class="creating__top-text window__top-text flex">
@@ -65,8 +65,10 @@
                                 </option>
 
                             </select>
-                            <input type="text" v-model="item.value" name="contact" class="form__input-contact "
-                                placeholder="Введите данные контакта" required>
+
+
+                            <input :type="item.inputType" v-model="item.value" name="contact"
+                                class="form__input-contact " placeholder="Введите данные контакта" required />
 
                             <button @click.prevent="contactFormRemove(item.id - 1)"
                                 class="form__contact-remove-btn btn-reset">
@@ -165,15 +167,18 @@ export default {
             loading: 'loadingProcess',
             error: 'loadingError',
             errors: 'errors',
-        }
-        ),
+
+        }),
+
+
     },
     methods: {
         ...mapActions(['addClients']),
+
         doAddClient() {
             this.addClients({ name: this.name, surname: this.surname, lastName: this.lastName, contacts: this.contactsArr });
             console.log(this.contactsArr)
-            if (this.errors == false) {
+            if (!this.loadingError) {
                 console.log('Ошибки нет, нужно закрыть')
                 this.doClose()
             }
@@ -196,8 +201,9 @@ export default {
             this.name = '';
             this.surname = '';
             this.lastName = '';
-            this.contactsArr = [];
+
         },
+
 
         onOutsideClick($event) {
             if ($event.target !== this.$refs.content && $event.target.contains(this.$refs.content)) {
@@ -211,9 +217,11 @@ export default {
         },
         contactFormRemove(labelId) {
             this.contactsArr.splice(labelId, 1);
+            this.contactsArr.forEach((elem) => { elem.id >= labelId ? elem.id -= 1 : elem.id })
         },
 
 
     }
+
 }
 </script>

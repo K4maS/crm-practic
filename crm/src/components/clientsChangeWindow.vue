@@ -1,7 +1,7 @@
 <template>
     <section class="changing window">
         <div class="changing__blackout window__blackout flex" @click="onOutsideClick">
-            <div class="changing__block window__block flex">
+            <div ref="content" class="changing__block window__block flex">
 
                 <div class="changing__top window__top flex">
                     <div class="changing__top-text window__top-text flex">
@@ -174,7 +174,7 @@ export default {
 
         }
     },
-    props: { open: { type: Boolean }, openRemove: { type: Boolean }, id: { type: String }, },
+    props: { open: { type: Boolean }, openRemove: { type: Boolean }, id: { type: String }, currentClient: { type: Object } },
     methods: {
         ...mapMutations(['updateCurrentId', 'updateProcessChanging', 'updateProcessError']),
         ...mapActions(['changeClients']),
@@ -188,6 +188,16 @@ export default {
         },
 
         loadClient() {
+
+            // this.clientId = this.currentClient.id,
+            //     this.name = this.currentClient.name,
+            //     this.surname = this.currentClient.surname,
+            //     this.lastName = this.currentClient.lastName,
+            //     this.contactsArr = this.addId(this.currentClient.contacts)
+            // this.updateClients(this.currentClient)
+
+
+
             this.updateProcessChanging(true);
             this.updateProcessError(false);
 
@@ -206,7 +216,6 @@ export default {
                     this.updateProcessError(true);
                 })
                 .then(this.updateProcessChanging(false),)
-
 
         },
 
@@ -234,6 +243,7 @@ export default {
         },
         contactFormRemove(labelId) {
             this.contactsArr.splice(labelId, 1);
+            this.contactsArr.forEach((elem) => { elem.id >= labelId ? elem.id -= 1 : elem.id });
         },
         doClose() {
             this.$emit('update:open', false);

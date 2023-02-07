@@ -41,7 +41,7 @@
                 <ul class="table__actions-list list-style flex">
                     <li class="table__action-item ">
                         <!-- table-change--onload -->
-                        <button @click.prevent="clickChangeBtn"
+                        <button @click.prevent="doLoadCurrentClient(client.id)"
                             class="table__change table__action-btn btn-reset text-black-main flex">
 
                             <svg v-if="loadingProcess && client.id == getCurrentId" class="svg-loading" width="16"
@@ -85,8 +85,8 @@
         </td>
     </tr>
     <Teleport v-if="changeBtnIsClicked" to="#show-window">
-        <clientsChangeWindow v-model:open="changeBtnIsClicked" v-model:open-remove="removeBtnIsClicked"
-            :id="client.id" />
+        <clientsChangeWindow v-model:current-client="currentClient" v-model:open="changeBtnIsClicked"
+            v-model:open-remove="removeBtnIsClicked" :id="client.id" />
     </Teleport>
     <Teleport v-if="removeBtnIsClicked" to="#show-window">
         <clientsRemoveWindow v-model:open="removeBtnIsClicked" :id="client.id" />
@@ -98,7 +98,7 @@ import clientsContactsList from './clientsContactsList.vue';
 import clientsChangeWindow from './clientsChangeWindow.vue';
 import clientsRemoveWindow from './clientsRemoveWindow.vue';
 import { Teleport } from 'vue';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     props: ['client'],
@@ -109,6 +109,9 @@ export default {
         };
     },
     methods: {
+        ...mapActions(['loadCurrentClient']),
+
+
         formatedDate(date) {
             let fullDate = new Date(date);
 
@@ -129,8 +132,14 @@ export default {
             console.log('Кнопака у нажата');
             return this.removeBtnIsClicked = true;
         },
+        doLoadCurrentClient(id) {
+            this.loadCurrentClient(id);
+            this.clickChangeBtn()
+
+        },
     },
     components: { clientsContactsList, clientsChangeWindow, clientsRemoveWindow, Teleport },
+
 
     computed: {
         ...mapGetters([
@@ -138,7 +147,11 @@ export default {
             'loadingError',
             'errors',
             'getCurrentId',
+            'currentClient'
         ]),
+
+
+
         fullName() {
             let fullNameArr = [this.client.lastName, this.client.name, this.client.surname,]
             return fullNameArr.join(' ');

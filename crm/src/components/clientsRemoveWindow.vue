@@ -1,7 +1,7 @@
 <template>
     <section class="delete-client window">
         <div class="delete-client__blackout window__blackout flex" @click="onOutsideClick">
-            <div class="delete-client__block window__block flex">
+            <div ref="content" class="delete-client__block window__block flex">
 
                 <div class="delete-client__top window__top flex">
                     <div class="delete-client__top-text window__top-text flex">

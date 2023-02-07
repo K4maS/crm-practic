@@ -702,7 +702,11 @@ main {}
     /* min-height: 492px; */
     background: #FFFFFF;
     box-shadow: 0px 0px 35px rgba(0, 0, 0, 0.15);
+
+    translate: ;
 }
+
+
 
 .window__form {
     flex-direction: column;
