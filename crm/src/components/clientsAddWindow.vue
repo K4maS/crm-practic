@@ -178,10 +178,12 @@ export default {
         doAddClient() {
             this.addClients({ name: this.name, surname: this.surname, lastName: this.lastName, contacts: this.contactsArr });
             console.log(this.contactsArr)
-            if (!this.loadingError) {
-                console.log('Ошибки нет, нужно закрыть')
-                this.doClose()
-            }
+        
+                if (!this.loadingError) {
+                    console.log('Ошибки нет, нужно закрыть')
+                    this.doClose()
+                }
+          
 
         },
 

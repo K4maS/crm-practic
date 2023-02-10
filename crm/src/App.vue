@@ -9,7 +9,7 @@
             <h1 class="clients__title section__title">
               Клиенты
             </h1>
-          
+
             <div class="clients__content" data-simplebar>
 
               <!-- таблица с клиентами -->
@@ -24,6 +24,16 @@
                     d="M2 20C2 29.941 10.059 38 20 38C29.941 38 38 29.941 38 20C38 10.059 29.941 2 20 2C17.6755 2 15.454 2.4405 13.414 3.243"
                     stroke="#9873FF" stroke-width="4" stroke-miterlimit="10" stroke-linecap="round" />
                 </svg>
+                <div v-if="loadingError" class="error-message flex">
+                  <h5>
+                    Ой, что-то пошло не так:
+                  </h5>
+                  <p class="">
+                    {{ errors }}
+                  </p>
+
+
+                </div>
 
               </div>
             </div>
@@ -95,4 +105,11 @@ export default {
   components: { clientsTable, clientsAddWindow, cliensHeader, },
 }
 </script>
+<style>
+.error-message {
+  flex-direction: column;
+  align-items: center;
+  color: gray;
+}
+</style>
 

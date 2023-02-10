@@ -100,7 +100,8 @@ export default createStore({
                 },)
                 .catch((response) => {
                     ctx.commit('updateProcessError', true);
-                    ctx.commit('updateError', response)
+                    console.log(response)
+                    ctx.commit('updateError', response.message)
                 })
                 .then(ctx.commit('updateProcessChanging', false))
 
