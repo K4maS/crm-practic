@@ -141,7 +141,7 @@
 
 <script>
 import contactTypes from '@/data/contactTypes';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 
 export default {
@@ -174,16 +174,17 @@ export default {
     },
     methods: {
         ...mapActions(['addClients']),
+        ...mapMutations(['updateProcessError']),
 
-        doAddClient() {
-            this.addClients({ name: this.name, surname: this.surname, lastName: this.lastName, contacts: this.contactsArr });
+        async doAddClient() {
+            await this.addClients({ name: this.name, surname: this.surname, lastName: this.lastName, contacts: this.contactsArr });
             console.log(this.contactsArr)
-        
-                if (!this.loadingError) {
-                    console.log('Ошибки нет, нужно закрыть')
-                    this.doClose()
-                }
-          
+
+            if (!this.error) {
+                console.log('Ошибки нет, нужно закрыть')
+                this.doClose()
+            }
+
 
         },
 
@@ -198,6 +199,7 @@ export default {
             return max + 1;
         },
         doClose() {
+            this.updateProcessError(false);
             this.$emit('update:open', false);
             this.contactsArr = [];
             this.name = '';
@@ -223,7 +225,12 @@ export default {
         },
 
 
-    }
+
+
+    },
+    created() {
+
+    },
 
 }
 </script>

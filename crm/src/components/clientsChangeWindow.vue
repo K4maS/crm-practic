@@ -178,10 +178,11 @@ export default {
     methods: {
         ...mapMutations(['updateCurrentId', 'updateProcessChanging', 'updateProcessError']),
         ...mapActions(['changeClients']),
-        doChagingClient() {
-            this.changeClients({ id: this.id, name: this.name, surname: this.surname, lastName: this.lastName, contacts: this.contactsArr });
+        async doChagingClient() {
+
+            await this.changeClients({ id: this.id, name: this.name, surname: this.surname, lastName: this.lastName, contacts: this.contactsArr });
             console.log(this.contactsArr)
-            if (this.errors == false) {
+            if (!this.error) {
                 console.log('Ошибки нет, нужно закрыть')
                 this.doClose()
             }
@@ -246,6 +247,7 @@ export default {
             this.contactsArr.forEach((elem) => { elem.id >= labelId ? elem.id -= 1 : elem.id });
         },
         doClose() {
+            this.updateProcessError(false);
             this.$emit('update:open', false);
             this.name = '';
             this.surname = '';
@@ -275,6 +277,7 @@ export default {
 
     },
     created() {
+        this.updateProcessError(false);
         this.updateCurrentId(this.id);
         this.loadClient();
         this.contactsArr = this.addId(this.contactsArr);
