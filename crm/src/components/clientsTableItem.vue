@@ -132,8 +132,8 @@ export default {
             console.log('Кнопака у нажата');
             return this.removeBtnIsClicked = true;
         },
-        doLoadCurrentClient(id) {
-            this.loadCurrentClient(id);
+        async doLoadCurrentClient(id) {
+            await this.loadCurrentClient(id);
             this.clickChangeBtn()
 
         },

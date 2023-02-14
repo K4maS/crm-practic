@@ -145,8 +145,8 @@
 
 <script>
 import contactTypes from '@/data/contactTypes';
-import axios from 'axios';
-import API_BASE_URL from "@/config";
+// import axios from 'axios';
+// import API_BASE_URL from "@/config";
 import {
     mapGetters,
     mapActions,
@@ -190,33 +190,11 @@ export default {
 
         loadClient() {
 
-            // this.clientId = this.currentClient.id,
-            //     this.name = this.currentClient.name,
-            //     this.surname = this.currentClient.surname,
-            //     this.lastName = this.currentClient.lastName,
-            //     this.contactsArr = this.addId(this.currentClient.contacts)
-            // this.updateClients(this.currentClient)
-
-
-
-            this.updateProcessChanging(true);
-            this.updateProcessError(false);
-
-            return axios.get(API_BASE_URL + '/api/clients/' + this.id)
-                .then((response) => {
-
-                    this.clientId = response.data.id,
-                        this.name = response.data.name,
-                        this.surname = response.data.surname,
-                        this.lastName = response.data.lastName,
-                        this.contactsArr = this.addId(response.data.contacts)
-                    this.updateClients(response.data)
-                })
-                .catch((answer) => {
-                    console.log(answer.response);
-                    this.updateProcessError(true);
-                })
-                .then(this.updateProcessChanging(false),)
+            this.clientId = this.currentClient.id,
+                this.name = this.currentClient.name,
+                this.surname = this.currentClient.surname,
+                this.lastName = this.currentClient.lastName,
+                this.contactsArr = this.addId(this.currentClient.contacts)
 
         },
 
