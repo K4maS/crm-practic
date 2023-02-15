@@ -26,11 +26,9 @@
                 </svg>
                 <div v-if="loadingError" class="error-message flex">
                   <h5>
-                    Ой, что-то пошло не так:
+                    Ой, что-то пошло не так :(
                   </h5>
-                  <p class="">
-                    {{ errors }}
-                  </p>
+               
 
 
                 </div>
